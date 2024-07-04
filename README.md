@@ -137,6 +137,109 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 
 ---
 
+## Redux Toolkit: Using Computed Property Names
+
+### Introduction
+
+In Redux Toolkit, it's common to encounter scenarios where you need to use computed property names. This is particularly useful when defining reducers dynamically. This guide explains how to correctly use computed property names in your Redux reducers.
+
+### Understanding Computed Property Names
+
+#### What are Computed Property Names?
+
+Computed property names allow you to dynamically assign keys to an object based on variable values. In JavaScript, this is done using square brackets `[]`.
+
+#### Example
+
+Suppose you have an `authSlice` defined using Redux Toolkit's `createSlice`:
+
+```javascript
+import { createSlice } from '@reduxjs/toolkit';
+
+const authSlice = createSlice({
+  name: 'auth',
+  initialState: { loggedIn: false },
+  reducers: {
+    login: state => { state.loggedIn = true; },
+    logout: state => { state.loggedIn = false; }
+  }
+});
+
+export default authSlice;
+```
+
+Here, `authSlice.name` would be `'auth'`.
+
+### Using Computed Property Names in Reducers
+
+#### Incorrect Usage
+
+If you directly use `authSlice.name` without square brackets in your root reducer, it will be interpreted as a literal string:
+
+```javascript
+import { combineReducers } from 'redux';
+import authSlice from './authSlice';
+
+const rootReducer = combineReducers({
+  authSlice.name: authSlice.reducer, // Incorrect usage
+});
+
+export default rootReducer;
+```
+
+In this case, `authSlice.name` is treated as a literal key, not the value of `authSlice.name`.
+
+#### Correct Usage
+
+To use the value of `authSlice.name` as the key, you need to use square brackets:
+
+```javascript
+import { combineReducers } from 'redux';
+import authSlice from './authSlice';
+
+const rootReducer = combineReducers({
+  [authSlice.name]: authSlice.reducer, // Correct usage
+});
+
+export default rootReducer;
+```
+
+This ensures that the key in the `combineReducers` object is dynamically set to the value of `authSlice.name`.
+
+### What is a Literal String?
+
+A literal string is a fixed sequence of characters enclosed in quotes. For example:
+
+- Double quotes: `"hello"`
+- Single quotes: `'world'`
+- Backticks (template literals): \`backticks\`
+
+#### Illustration of Literal Strings vs Computed Property Names
+
+1. **Literal String Key**:
+   ```javascript
+   const obj = {
+     "authSlice.name": "some value"
+   };
+   console.log(obj); // Output: { authSlice.name: "some value" }
+   ```
+
+2. **Computed Property Name**:
+   ```javascript
+   const key = "dynamicKey";
+   const obj = {
+     [key]: "some value"
+   };
+   console.log(obj); // Output: { dynamicKey: "some value" }
+   ```
+
+In the second example, `key` is a variable containing the string `"dynamicKey"`, and `[key]` evaluates to `"dynamicKey"`, making it the key of the object.
+
+### Conclusion
+
+Using computed property names in Redux Toolkit allows for more dynamic and maintainable code. By understanding the difference between literal strings and computed property names, you can avoid common pitfalls and write more flexible reducers.
+
+---
 
   
  
